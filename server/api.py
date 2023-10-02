@@ -1,7 +1,12 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
-@app.get('/')
-def root():
-    return "Hello, World!"
+class UserInput(BaseModel):
+    msg: str
+
+@app.post('/')
+def root(req: UserInput):
+    return req.msg
+

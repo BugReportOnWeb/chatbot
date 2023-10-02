@@ -1,24 +1,42 @@
 import { View, TextInput, Text } from "react-native";
 import { useState } from "react";
 
-/* type Chat = {
-    msg: string -> <user_request> | <bot_reponse>;
-    type: string -> 'user' | 'bot';
-} */
-
 const App = () => {
     const [inputText, setInputText] = useState('');
     const [chatLogs, setChatLogs] = useState([]);
 
-    const addText = () => {
-        // User part
-        const newChat = { msg: inputText, type: "user" }
+    // type Chat = {
+    //     msg: string -> <user_request> | <bot_reponse>;
+    //     type: string -> 'user' | 'bot';
+    // }
 
-        setChatLogs(prevLogs => {
-            return [...prevLogs, newChat]
-        })
+    const addChat = (chat) => {
+         setChatLogs(prevLogs => {
+            return [...prevLogs, chat]
+        })       
+    }
 
+    const handleTextSubmit = async () => {
+        // User request (UI display)
+        const newUserChat = { msg: inputText, type: 'user' }
+        addChat(newUserChat)
         setInputText('')
+
+        // Bot response (Feching + UI display)
+        try {
+            const res = await fetch("http://172.20.10.2:8000", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ msg: newUserChat.msg })
+            });
+
+            const data = await res.json();
+            const newBotChat = { msg: data.msg, type: 'bot' }
+
+            addChat(newBotChat)
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     return (
@@ -29,7 +47,7 @@ const App = () => {
                     placeholder="Type here"
                     defaultValue={inputText}
                     onChangeText={newText => setInputText(newText)}
-                    onSubmitEditing={addText}
+                    onSubmitEditing={handleTextSubmit}
                 />
 
                 {chatLogs && chatLogs.map((chat, index) => (

@@ -1,3 +1,4 @@
+import { NETWORK_ADDRESS, SERVER_PORT } from '@env'
 import { useState } from "react";
 import { 
     View,
@@ -5,10 +6,11 @@ import {
     Text,
     KeyboardAvoidingView,
     Platform ,
-    ScrollView
 } from "react-native";
 
 const App = () => {
+    const SERVER_ORIGIN = `${NETWORK_ADDRESS}:${SERVER_PORT}`
+
     const [inputText, setInputText] = useState('');
     const [chatLogs, setChatLogs] = useState([]);
 
@@ -20,7 +22,7 @@ const App = () => {
     const addChat = (chat) => {
          setChatLogs(prevLogs => {
             return [...prevLogs, chat]
-        })       
+        })
     }
 
     const handleTextSubmit = async () => {
@@ -31,7 +33,7 @@ const App = () => {
 
         // Bot response (Feching + UI display)
         try {
-            const res = await fetch("http://172.20.10.2:8000", {
+            const res = await fetch(SERVER_ORIGIN, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ msg: newUserChat.msg })

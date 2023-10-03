@@ -5,15 +5,26 @@ from dotenv import load_dotenv
 
 from controller.main import get_response
 
-import uvicorn
 import os
+import uvicorn
 
 load_dotenv()
 HOST_ADDRESS = '0.0.0.0'
+NETWORK_ADDRESS = os.getenv("NETWORK_ADDRESS")
 SERVER_PORT = int(os.getenv("SERVER_PORT"))
-PORT = 8000
+CLIENT_PORT = int(os.getenv("CLIENT_PORT"))
 
 app = FastAPI()
+
+origins = [f"{NETWORK_ADDRESS}:{CLIENT_PORT}"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class UserInput(BaseModel):
     msg: str

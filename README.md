@@ -2,11 +2,11 @@
 
 ## Project Overview
 
-A chatbot application built using React Native for the frontend, FastAPI (Python) for the backend, and Artificial Neural Networks (ANN) for the main chatbot logic.
+A chatbot application developed using React Native for the frontend, FastAPI (Python) for the backend, and Artificial Neural Networks (ANN) for the core chatbot logic.
 
 ## Prerequisites
 
-Before you can run the chatbot, make sure you have the following prerequisites installed on your system:
+Before running the chatbot, ensure that you have the following prerequisites installed on your system:
 
 - Node.js and npm: You will need Node.js and npm to run the React Native frontend.
 - Python: You will need Python to run the FastAPI backend.
@@ -44,12 +44,12 @@ CLIENT_PORT=8081
     npx expo start
     ```
 
-    - The client will start running on `http://<NETWORK_ADDRESS>:8081`
+    - The client will start running on `exp://<NETWORK_ADDRESS>:8081`
 
     - Scan the generated QR to view the UI on Expo app (on your devise).
 
-4. Backend (FastAPI):
-    - Navigate to the backend directory:
+4. Server (FastAPI):
+    - Navigate to the server directory:
     ```bash
     cd server
     ```
@@ -61,7 +61,7 @@ CLIENT_PORT=8081
 
     - Start the FastAPI server:
     ```bash
-    python3 ap.py
+    python3 app.py
     ```
 
     - The backend server will start listening on `http://0.0.0.0:8000`
@@ -90,6 +90,5 @@ chatbot/
 │   └── requirements.txt
 │
 ├── .env
-├── .gitignore
 └── README.md
 ```

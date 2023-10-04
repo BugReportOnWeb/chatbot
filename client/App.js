@@ -5,16 +5,17 @@ import {
     TextInput,
     Text,
     KeyboardAvoidingView,
-    Platform ,
+    Platform
 } from "react-native";
 
 const App = () => {
-    const SERVER_ORIGIN = `${NETWORK_ADDRESS}:${SERVER_PORT}`
-
     const [inputText, setInputText] = useState('');
     const [chatLogs, setChatLogs] = useState([]);
 
-    // type Chat = {
+    const SERVER_ORIGIN = `${NETWORK_ADDRESS}:${SERVER_PORT}`
+
+    // Type of 'chat' (Chat):
+    // {
     //     msg: string -> <user_request> | <bot_reponse>;
     //     type: string -> 'user' | 'bot';
     // }
@@ -57,10 +58,11 @@ const App = () => {
                 <View className='px-5 mb-8'>
                     {/* 
                         BUG: Check on (from -> to)
-                             mb-1 (parent) and mb-2 (child)
-                             mb-3 (parent) with flex gap-2 (child) 
+                        From -> mb-1 (parent) and mb-2 (child)
+                        To -> mb-3 (parent) with flex gap-2 (child) 
 
-                        FEAT: Scrolling on each chat section
+                        BUG: max width to be around 70% on chat bubble
+                        BUG: Scrolling on each chat section
                     */}
                     <View className='mb-1.5'>
                         {chatLogs && chatLogs.map((chat, index) => (

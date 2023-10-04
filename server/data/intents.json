@@ -1,0 +1,34 @@
+{
+    "intents": [
+        {
+            "tag": "noanswer",
+            "patterns": [],
+            "responses": ["Sorry, can't understand you", "Please give me more info", "Not sure I understand"],
+            "context": [""]
+        },
+        {
+            "tag": "hello",
+            "patterns": ["Hello", "Hi there", "Good morning", "What's up"],
+            "responses": ["Hey!", "Hello", "Hi!", "Good morning!"],
+            "context": ""
+        },
+        {
+            "tag": "actions",
+            "patterns": ["What can you do", "What can I ask you", "Can you help me"],
+            "responses": ["I can do a lot of things but majorily help with your queries with the portal or app or anything in between"],
+            "context": ""
+        },
+        {
+            "tag": "thanks",
+            "patterns": ["Thank you", "Thank you very much", "thanks"],
+            "responses": ["I only do my job️", "No problem!"],
+            "context": ""
+        },
+        {
+            "tag": "goodbye",
+            "patterns": ["Goodbye", "Good afternoon", "Bye"],
+            "responses": ["Goodbye!", "See you soon!"],
+            "context": ""
+        }
+    ]
+}

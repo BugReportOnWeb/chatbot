@@ -1,13 +1,17 @@
 import nltk
-import numpy as np
 from nltk.stem import WordNetLemmatizer
 
 # TODO: Add download stuff from nltk (punkt & wordnet)
 # TODO: Encapsulate (defs breakdown)
 
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+
 import json
 import string
 import random
+import numpy as np
 
 # CHECK: Shift inside function (no global use)
 lemmatizer = WordNetLemmatizer()
@@ -41,7 +45,7 @@ def chatbot(user_input):
     words = sorted(set(words))
     classes = sorted(set(classes))
 
-    # Training data  (In 0 & 1)
+    # Training data (In 0 & 1)
     # [[Match with vocab and pattern], [respective pattern tag]] 
     training = []
     output_template = [0] * len(classes)
@@ -66,9 +70,37 @@ def chatbot(user_input):
     random.shuffle(training)
     training = np.array(training, dtype=object)
 
-    # Features and Target splitting
-    training_features = np.array(list(training[:, 0]))
-    training_targets = np.array(list(training[:, 1]))
+    # Features (X) and Target (Y) splitting
+    training_X = np.array(list(training[:, 0]))
+    training_Y = np.array(list(training[:, 1]))
+
+    # Model training
+    model = Sequential()
+
+    learning_rate_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
+        initial_learning_rate=0.01,
+        decay_steps=10000,
+        decay_rate=0.9
+    )
+
+    # CHECK: Model methods
+    # CHECK: Using legacy keras for more optimized result (optimizers.legacy.Adam)
+    # CHECK: Change of 'learning_rate' and add of 'decay_rate'
+    adam = tf.keras.optimizers.Adam(learning_rate=learning_rate_schedule)
+
+    model.add(Dense(128, input_shape=(len(training_X[0]),), activation="relu"))
+    model.add(Dropout(0.5))
+    model.add(Dense(64, activation="relu"))
+    model.add(Dropout(0.5))
+    model.add(Dense(len(training_Y[0]), activation="softmax"))
+
+    model.compile(
+        loss='categorical_crossentropy',
+        optimizer=adam,
+        metrics=["accuracy"]
+    )
+
+    model.fit(x=training_X, y=training_Y, epochs=150, verbose=1)
 
     return f'''Chatbot is under development.
 Sorry for inconvenience! :(

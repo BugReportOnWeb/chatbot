@@ -42,6 +42,7 @@ def chatbot(user_input):
 
     # CHECK: Test on 'pos' value for lemmatization
     words = [lemmatizer.lemmatize(word.lower()) for word in words if word not in string.punctuation]
+
     words = sorted(set(words))
     classes = sorted(set(classes))
 
@@ -85,7 +86,7 @@ def chatbot(user_input):
 
     # CHECK: Model methods
     # CHECK: Using legacy keras for more optimized result (optimizers.legacy.Adam)
-    # CHECK: Change of 'learning_rate' and add of 'decay_rate'
+    # CHECK: Change of 'learning_rate' and add of 'decay_rate' (in legacy)
     adam = tf.keras.optimizers.Adam(learning_rate=learning_rate_schedule)
 
     model.add(Dense(128, input_shape=(len(training_X[0]),), activation="relu"))
@@ -100,7 +101,28 @@ def chatbot(user_input):
         metrics=["accuracy"]
     )
 
+    # CHECK: Epochs value
     model.fit(x=training_X, y=training_Y, epochs=150, verbose=1)
+
+    # Preprocessing user input
+    tokenized_user_input = nltk.word_tokenize(user_input)
+    lemmatized_user_input = [lemmatizer.lemmatize(word) for word in tokenized_user_input if word not in string.punctuation]
+
+    bag_of_words = []
+
+    for word in words:
+        bag_of_words.append(1) if word in lemmatized_user_input else bag_of_words.append(0)
+
+    bag_of_words = np.array(bag_of_words)
+
+    # Predicting and outputting result
+    result = model.predict(np.array([bag_of_words]))[0]
+    tag = classes[np.argmax(result)]
+
+    for intent in data["intents"]:
+        if intent["tag"] == tag:
+            res = f"{random.choice(intent['responses'])} - {intent['tag']}"
+            print(res)
 
     return f'''Chatbot is under development.
 Sorry for inconvenience! :(

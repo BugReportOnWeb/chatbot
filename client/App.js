@@ -1,4 +1,3 @@
-import { NETWORK_ADDRESS, SERVER_PORT } from '@env'
 import { useState } from "react";
 import { 
     View,
@@ -8,31 +7,29 @@ import {
     Platform
 } from "react-native";
 
+import { NETWORK_ADDRESS, SERVER_PORT } from '@env'
+
 const App = () => {
     const [inputText, setInputText] = useState('');
     const [chatLogs, setChatLogs] = useState([]);
 
-    const SERVER_ORIGIN = `${NETWORK_ADDRESS}:${SERVER_PORT}`
+    const SERVER_ORIGIN = `${NETWORK_ADDRESS}:${SERVER_PORT}`;
 
-    // Type of 'chat' (Chat):
-    // {
-    //     msg: string -> <user_request> | <bot_reponse>;
-    //     type: string -> 'user' | 'bot';
-    // }
+    // Chat type -> { msg: string, type: string ('user' | 'bot' | 'loading') }
 
-    const addChat = (chat) => {
+    const addChat = chat => {
          setChatLogs(prevLogs => {
-            return [...prevLogs, chat]
+            return [...prevLogs, chat];
         })
     }
 
     const handleTextSubmit = async () => {
-        // User request (UI display)
-        const newUserChat = { msg: inputText, type: 'user' }
-        addChat(newUserChat)
-        setInputText('')
+        // User chat
+        const newUserChat = { msg: inputText, type: 'user' };
+        addChat(newUserChat);
+        setInputText('');
 
-        // Bot response (Feching + UI display)
+        // Bot chat
         try {
             const res = await fetch(SERVER_ORIGIN, {
                 method: "POST",
@@ -41,9 +38,9 @@ const App = () => {
             });
 
             const data = await res.json();
-            const newBotChat = { msg: data.msg, type: 'bot' }
+            const newBotChat = { msg: data.msg, type: 'bot' };
 
-            addChat(newBotChat)
+            addChat(newBotChat);
         } catch (err) {
             console.error(err);
         }
@@ -56,14 +53,16 @@ const App = () => {
         >
             <View className='h-full flex justify-end'>
                 <View className='px-5 mb-8'>
+
                     {/* 
                         BUG: Check on (from -> to)
-                        From -> mb-1 (parent) and mb-2 (child)
-                        To -> mb-3 (parent) with flex gap-2 (child) 
+                             From -> mb-1 (parent) and mb-2 (child)
+                             To -> mb-3 (parent) with flex gap-2 (child) 
 
                         BUG: max width to be around 70% on chat bubble
                         BUG: Scrolling on each chat section
                     */}
+
                     <View className='mb-1.5'>
                         {chatLogs && chatLogs.map((chat, index) => (
                             <View key={index} className={`${chat.type === 'user' ? 'self-end bg-[#0084FF]' : 'self-start bg-[#ECEFF1]'} px-3.5 py-2.5 rounded-3xl mb-2.5`}>

@@ -21,7 +21,7 @@ def clean_text(text):
     tokenized_text = nltk.word_tokenize(text)
     lemmatized_text = [lemmatizer.lemmatize(word.lower()) for word in tokenized_text if word not in string.punctuation]
 
-    return lemmatized_text
+    return np.array(lemmatized_text)
 
 
 def bag_of_words(text, vocab):
@@ -34,7 +34,7 @@ def bag_of_words(text, vocab):
     return np.array(bow)
 
 
-def train_model(train_X, train_Y):
+def train_model(training_X, training_Y):
     model = Sequential()
 
     learning_rate_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
@@ -46,13 +46,14 @@ def train_model(train_X, train_Y):
     # CHECK: Model methods
     # CHECK: Using legacy keras for more optimized result (optimizers.legacy.Adam)
     # CHECK: Change of 'learning_rate' and add of 'decay_rate' (in legacy)
+
     adam = tf.keras.optimizers.Adam(learning_rate=learning_rate_schedule)
 
-    model.add(Dense(128, input_shape=(len(train_X[0]),), activation="relu"))
+    model.add(Dense(128, input_shape=(len(training_X[0]),), activation="relu"))
     model.add(Dropout(0.5))
     model.add(Dense(64, activation="relu"))
     model.add(Dropout(0.5))
-    model.add(Dense(len(train_Y[0]), activation="softmax"))
+    model.add(Dense(len(training_Y[0]), activation="softmax"))
 
     model.compile(
         loss='categorical_crossentropy',
@@ -61,7 +62,7 @@ def train_model(train_X, train_Y):
     )
 
     # CHECK: Epochs value
-    model.fit(x=train_X, y=train_Y, epochs=150, verbose=1)
+    model.fit(x=training_X, y=training_Y, epochs=150, verbose=1)
 
     return model
 
@@ -121,11 +122,13 @@ def compute(user_input):
     # Model training
     model = train_model(training_X, training_Y)
 
+    # Check: Shift of functionality
     # Preprocessing user input
     user_input_bow = bag_of_words(user_input, words)
 
     # CHECK: Redundent use of array as input
     result = model.predict(np.array([user_input_bow]))[0]
+    print(result) # Check for values below 0.5
     tag = classes[np.argmax(result)]
 
     for intent in data["intents"]:
@@ -136,6 +139,7 @@ def compute(user_input):
     return f'''Chatbot is under development.
 Sorry for inconvenience! :(
 Received input: \'{user_input}\''''
+
 
 def get_response(user_input):
     if user_input == '':
